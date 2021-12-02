@@ -157,13 +157,6 @@ public class ZombieSC : LivingEntity
             // 오버랩 스피어로 범위내에 있는 PLAYER 레이어 콜라이더 추출
             Collider[] colliders = Physics.OverlapSphere(this.transform.position, traceRange, targetLayer);
 
-            //Debug.Log("____ Colliders ____");
-            //foreach (var target in colliders)
-            //{
-            //    Debug.Log(target.name);
-            //}
-            //Debug.Log("____ End Colliders ____");
-
             if (colliders.Length >= 1)
             {
 
@@ -191,17 +184,6 @@ public class ZombieSC : LivingEntity
 
                 }
 
-
-
-                //if (colliders[0].gameObject.layer == LayerMask.NameToLayer("DEFENSIVEGOODS"))
-                //{
-                //    if (colliders[0].gameObject.CompareTag("FENCE"))
-                //    {
-                //        targetEntity = colliders[0].gameObject;
-                //    }
-                //}
-                //else
-                //    targetEntity = colliders[0].gameObject;
             }
             else
             {
@@ -229,7 +211,6 @@ public class ZombieSC : LivingEntity
     {
         if (other.CompareTag("PLAYER"))
         {
-            //Debug.Log("Player Contact");
             if (!list.Contains(other.gameObject))
             {
                 list.Add(other.gameObject);
@@ -242,13 +223,11 @@ public class ZombieSC : LivingEntity
                 ZombieSC zombie = other.GetComponent<ZombieSC>();
                 other.GetComponent<LivingEntity>().Damaged(damage, hitPoint, hitNormal);
 
-                //Debug.Log("HIT");
             }
 
         }
         else if (other.CompareTag("BUNKERDOOR") || other.CompareTag("FENCE"))
         {
-            //Debug.Log("____ Target Setting " + other.tag + " ____");
 
             if (!list.Contains(other.gameObject))
             {
@@ -278,7 +257,6 @@ public class ZombieSC : LivingEntity
     /// </summary>
     void NowTrace()
     {
-        //Debug.Log("____TRACE____");
         state = eCharacterState.Trace;
         if (pathFinder.enabled)
         {
@@ -305,27 +283,39 @@ public class ZombieSC : LivingEntity
         StartCoroutine(NowAttacking(collidertime));
         float attackdelayTime = MoveDuration(eCharacterState.Attack);
         StartCoroutine(EndAttacking(attackdelayTime));
-
-        //Debug.Log(MoveDuration(eCharacterState.Attack));
     }
-
+    /// <summary>
+    /// 리스트 초기화
+    /// </summary>
     public void ClearList()
     {
         list.Clear();
     }
-
+    /// <summary>
+    /// 공격 시작시 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator StartAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime);
         pathFinder.enabled = false;
     }
-
+    /// <summary>
+    /// 공격중일때 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator NowAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime);
         ClearList();
     }
-
+    /// <summary>
+    /// 공격이 끝날때 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator EndAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime * 0.8f);
@@ -333,7 +323,9 @@ public class ZombieSC : LivingEntity
         pathFinder.enabled = true;
         NowTrace();
     }
-
+    /// <summary>
+    /// 공격도중 Attackcollider 활성화 함수(애니매이션 이벤트에 넣을 함수)
+    /// </summary>
     void ColliderON()
     {
         attackColl.SetActive(true);
@@ -349,10 +341,8 @@ public class ZombieSC : LivingEntity
         base.Down();
         pathFinder.enabled = false;
         enemyAnimator.SetTrigger("IsDead");
-        //Debug.Log(MoveDuration(eCharacterState.Die));
 
         StartCoroutine(WaitForDieAnimation(MoveDuration(eCharacterState.Die)));
-
     }
 
 }

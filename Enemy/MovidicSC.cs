@@ -54,7 +54,13 @@ public class MovidicSC : LivingEntity
         targetPosition = targetEntity.GetComponent<Collider>().bounds.center;
         targetSize = targetEntity.GetComponent<Collider>().bounds.size;
     }
-
+    /// <summary>
+    /// 초기 스탯 설정
+    /// </summary>
+    /// <param name="newHp"></param>
+    /// <param name="newAP"></param>
+    /// <param name="newSpeed"></param>
+    /// <param name="newDamage"></param>
     public void Setup(float newHp = 300f, float newAP = 5f, float newSpeed = 2f, float newDamage = 20f)
     {
         startHp = newHp;
@@ -63,7 +69,11 @@ public class MovidicSC : LivingEntity
         damage = newDamage;
         pathFinder.speed = newSpeed;
     }
-
+    /// <summary>
+    /// 애니매이션 Duration 값 얻기
+    /// </summary>
+    /// <param name="moveType"></param>
+    /// <returns></returns>
     public float MoveDuration(eCharacterState moveType)
     {
         string name = string.Empty;
@@ -207,7 +217,6 @@ public class MovidicSC : LivingEntity
 
         pathFinder.enabled = true;
         pathFinder.speed = 0f;
-        //enemyAnimator.SetFloat("RushSpeed", 1f);
         enemyAnimator.SetTrigger("IsAttack");
         float attackTime = 0.5f;
         StartCoroutine(StartAttacking(attackTime));
@@ -216,14 +225,13 @@ public class MovidicSC : LivingEntity
         float attackdelayTime = MoveDuration(eCharacterState.Attack);
         StartCoroutine(EndAttacking(attackdelayTime));
 
-        //Debug.Log(MoveDuration(eCharacterState.Attack));
     }
     /// <summary>
     /// 돌진 공격 함수
     /// </summary>
     void RushAttack()
     {
-        //Debug.Log("____ Rush Attack ____");
+        // 돌진 데미지 설정 및 돌진 속도 설정
         StartCoroutine(RushColliderSetting());
         damage = 40f;
         rigid.AddForce(this.transform.forward * 40f, ForceMode.Impulse);
@@ -235,6 +243,10 @@ public class MovidicSC : LivingEntity
     [SerializeField]
     Collider bodyCollider2;
 
+    /// <summary>
+    /// 돌진중 오브젝트 Collider 설정변화
+    /// </summary>
+    /// <returns></returns>
     IEnumerator RushColliderSetting()
     {
         rigid.isKinematic = false;
@@ -280,18 +292,14 @@ public class MovidicSC : LivingEntity
     {
         while (!dead)
         {
-            //Debug.Log($"____ {transform.position.ToString()} , {transform.forward.ToString()} ____");
 
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, rushDistance, (1 << LayerMask.NameToLayer("DEFENSIVEGOODS")) | (1 << LayerMask.NameToLayer("WALL"))))
             {
-                //Debug.Log("___ TAEGET CHANGE ____");
 
                 if (hit.collider.CompareTag("FENCE"))
                 {
-                    //Debug.Log("___ TAEGET Fence ____");
                     targetEntity = hit.collider.gameObject;
-                    //canRush = true;
                 }
                 else
                 {
@@ -301,41 +309,44 @@ public class MovidicSC : LivingEntity
             else
                 targetEntity = startTarget;
 
-            //if (colliders[0].gameObject.layer == LayerMask.NameToLayer("DEFENSIVEGOODS"))
-            //{
-            //    if (colliders[0].gameObject.CompareTag("FENCE"))
-            //    {
-            //        targetEntity = colliders[0].gameObject;
-            //    }
-            //}
-            //else
-            //    targetEntity = colliders[0].gameObject;
-
             yield return new WaitForSeconds(0.1f);
         }
     }
-
+    /// <summary>
+    /// 공격 시작시 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator StartAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime);
         pathFinder.enabled = false;
     }
-
+    /// <summary>
+    /// 공격 중일때 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator NowAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime);
         ClearList();
     }
-
+    /// <summary>
+    /// 공격이 끝나면 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator EndAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime * 0.8f);
         isAttacking = false;
         pathFinder.enabled = true;
         NowTrace();
-        //print("=== ATTACK END ===");
     }
-
+    /// <summary>
+    /// 공격시 Attackcollider 활성화 함수(애니매이션 이벤트에 넣을 함수)
+    /// </summary>
     void ColliderOn()
     {
         attackColl.SetActive(true);
@@ -347,12 +358,10 @@ public class MovidicSC : LivingEntity
     }
 
     protected override void Down()
-
     {
         base.Down();
         pathFinder.enabled = false;
         enemyAnimator.SetTrigger("IsDead");
-        //Debug.Log(MoveDuration(eCharacterState.Die));
 
         StartCoroutine(WaitForDieAnimation(MoveDuration(eCharacterState.Die)));
     }

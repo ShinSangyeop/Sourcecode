@@ -126,10 +126,6 @@ public class SpiderSC : LivingEntity
 
         if (isAttacking == true)
         {
-
-            //Debug.Log("____ ROTATION ____");
-            //Debug.Log($"Position {targetPosition})");
-
             Quaternion LookRot = Quaternion.LookRotation(new Vector3(targetPosition.x, (targetPosition.y - (targetSize.y / 2)), targetPosition.z) - new Vector3(this.transform.position.x, 0, this.transform.position.z));
             transform.rotation = Quaternion.RotateTowards(transform.rotation, LookRot, 60f * Time.deltaTime);
         }
@@ -206,20 +202,12 @@ public class SpiderSC : LivingEntity
 
                 foreach (var collider in colliders)
                 {
-                    // targetValue = 0
                     if (collider.CompareTag("PLAYER"))
                     {
                         targetValue = 0;
                         targetEntity = collider.gameObject;
                         break;
                     }
-                    //// targetValue = 1 
-                    //else if (collider.CompareTag("FENCE") && targetValue > 1)
-                    //{
-                    //    targetValue = 1;
-                    //    targetEntity = collider.gameObject;
-                    //}
-                    // targetValue = 2
                     else if (collider.CompareTag("BUNKERDOOR") && targetValue > 2)
                     {
                         targetValue = 2;
@@ -228,15 +216,6 @@ public class SpiderSC : LivingEntity
 
                 }
 
-                //if (colliders[0].gameObject.layer == LayerMask.NameToLayer("DEFENSIVEGOODS"))
-                //{
-                //    if (colliders[0].gameObject.CompareTag("FENCE"))
-                //    {
-                //        targetEntity = colliders[0].gameObject;
-                //    }
-                //}
-                //else
-                //    targetEntity = colliders[0].gameObject;
             }
             else
             {
@@ -257,7 +236,6 @@ public class SpiderSC : LivingEntity
     {
         pathFinder.enabled = false;
         yield return new WaitForSeconds(_delaytime);
-        //Debug.Log("=== Start Attack ===");
     }
     /// <summary>
     /// 공격 이후 추적 상태 변경 코루틴
@@ -267,14 +245,9 @@ public class SpiderSC : LivingEntity
     IEnumerator EndAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime * 0.8f);
-        //Debug.Log("=== End Attack ===");
         isAttacking = false;
-        //if (!(Vector3.Distance(targetEnitity.transform.position, this.transform.position) <= attackDistance))
-        //{
-        //Debug.Log("____Path Finder On____");
         pathFinder.enabled = true;
         NowTrace();
-        //}
     }
     /// <summary>
     /// 투사체 발사하는 게임이벤트에 적용될 함수

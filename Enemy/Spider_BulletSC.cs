@@ -10,13 +10,11 @@ public class Spider_BulletSC : MonoBehaviour
     float fireSpeed = 12f;
     public float damage = 12f;
 
-    //Transform tr;
     Rigidbody rigid;
 
     private void Awake()
     {
         dir = transform.forward;
-        //tr = GetComponent<Transform>();
         rigid = GetComponent<Rigidbody>();
     }
     void Start()
@@ -27,8 +25,6 @@ public class Spider_BulletSC : MonoBehaviour
     void Update()
     {
         transform.Translate(Vector3.forward * fireSpeed * Time.deltaTime, Space.Self);
-
-        //Debug.Log(transform.forward);
     }
 
     private void OnTriggerEnter(Collider other)

@@ -30,6 +30,9 @@ public class ClutchSC : LivingEntity
     Vector3 targetSize;
     int targetValue = 5;
 
+    /// <summary>
+    /// 초기화
+    /// </summary>
     private void Awake()
     {
         pathFinder = GetComponent<NavMeshAgent>();
@@ -55,7 +58,13 @@ public class ClutchSC : LivingEntity
         targetSize = targetEntity.GetComponent<Collider>().bounds.size;
 
     }
-
+    /// <summary>
+    /// 초기 스탯 설정
+    /// </summary>
+    /// <param name="newHP"></param>
+    /// <param name="newAP"></param>
+    /// <param name="newSpeed"></param>
+    /// <param name="newDamage"></param>
     public void Setup(float newHP = 100f, float newAP = 5f, float newSpeed = 6f, float newDamage = 9f)
     {
         startHp = newHP;
@@ -64,7 +73,11 @@ public class ClutchSC : LivingEntity
         damage = newDamage;
         pathFinder.speed = newSpeed;
     }
-
+    /// <summary>
+    /// 애니매이션 Duration 값 얻기
+    /// </summary>
+    /// <param name="moveType"></param>
+    /// <returns></returns>
     public float MoveDuration(eCharacterState moveType)
     {
         string name = string.Empty;
@@ -119,8 +132,10 @@ public class ClutchSC : LivingEntity
         }
     }
 
-
-
+    /// <summary>
+    /// 공격 적중시 플레이어에게 확률적으로 출혈 효과
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("PLAYER"))
@@ -272,15 +287,6 @@ public class ClutchSC : LivingEntity
 
                 }
 
-                //if (colliders[0].gameObject.layer == LayerMask.NameToLayer("DEFENSIVEGOODS"))
-                //{
-                //    if (colliders[0].gameObject.CompareTag("FENCE"))
-                //    {
-                //        targetEntity = colliders[0].gameObject;
-                //    }
-                //}
-                //else
-                //    targetEntity = colliders[0].gameObject;
             }
             else
             {
@@ -297,7 +303,11 @@ public class ClutchSC : LivingEntity
             yield return new WaitForSeconds(0.1f);
         }
     }
-
+    /// <summary>
+    /// 출혈 효과 발동시 플레이어에게 가하는 데미지 코루틴
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     IEnumerator Bleeding(GameObject target)
     {
         PlayerCtrl _player = target.GetComponent<PlayerCtrl>();
@@ -310,19 +320,31 @@ public class ClutchSC : LivingEntity
         }
 
     }
-
+    /// <summary>
+    /// 공격 시작시 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator StartAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime); ;
         pathFinder.enabled = false;
     }
-
+    /// <summary>
+    /// 공격 중 일때 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator NowAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime);
         ClearList();
     }
-
+    /// <summary>
+    /// 공격이 끝나면 발동되는 코루틴
+    /// </summary>
+    /// <param name="_delaytime"></param>
+    /// <returns></returns>
     IEnumerator EndAttacking(float _delaytime)
     {
         yield return new WaitForSeconds(_delaytime * 0.8f);
@@ -330,6 +352,9 @@ public class ClutchSC : LivingEntity
         pathFinder.enabled = true;
         NowTrace();
     }
+    /// <summary>
+    /// Attackcollider 활성화 함수 (애니매이션 이벤트에 넣을 함수)
+    /// </summary>
     void ColliderON()
     {
         attackColl.SetActive(true);
